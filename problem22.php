@@ -1,73 +1,85 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the inputs
-    $num1 = $_POST["num1"];
-    $op1 = $_POST["op1"];
-    $num2 = $_POST["num2"];
-    $op2 = $_POST["op2"];
-    $num3 = $_POST["num3"];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 2 Problem 2</title>
+</head>
+<body>
+    <h2>Homework 2 Problem 2 </h2>
 
-    // Validate that inputs are numbers and operators are valid
-    if (!is_numeric($num1) || !is_numeric($num2) || !is_numeric($num3)) {
-        echo "ERROR: Invalid number input!";
-        exit;
-    }
+    <form method="POST" action="">
+        <input type="text" name="num1" required>
+        <input type="text" name="op1" required>
+        <input type="text" name="num2" required>
+        <input type="text" name="op2" required>
+        <input type="text" name="num3" required>
+        <button type="submit">Calculate</button>
+    </form>
 
-    $valid_operators = ['+', '-', '*', '/'];
-    if (!in_array($op1, $valid_operators) || !in_array($op2, $valid_operators)) {
-        echo "ERROR: Invalid operator!";
-        exit;
-    }
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $num1 = $_POST["num1"];
+        $op1 = $_POST["op1"];
+        $num2 = $_POST["num2"];
+        $op2 = $_POST["op2"];
+        $num3 = $_POST["num3"];
+        $result = 0;
+        
+        if (is_numeric($num1) && is_numeric($num2) && is_numeric($num3)) {
+            $valid_operators = ['+', '-', '*', '/'];
+            if (in_array($op1, $valid_operators) && in_array($op2, $valid_operators)) {
+                if ($op1 == '*' || $op1 == '/') {
+                    if ($op1 == '*') {
+                        $intermediateResult = $num1 * $num2;
+                    } else {
+                        $intermediateResult = $num1 / $num2;
+                    }  
+                    if ($op2 == '*' || $op2 == '/') {
+                        if ($op2 == '*') {
+                            $result = $intermediateResult * $num3;
+                        } else {
+                            $result = $intermediateResult / $num3;
+                        }
+                    } elseif ($op2 == '+' || $op2 == '-') {
+                        if ($op2 == '+') {
+                            $result = $intermediateResult + $num3;
+                        } else {
+                            $result = $intermediateResult - $num3;
+                        }
+                    }
+                } elseif ($op2 == '*' || $op2 == '/') {
+                    if ($op2 == '*') {
+                        $intermediateResult = $num2 * $num3;
+                    } else {
+                        $intermediateResult = $num2 / $num3;
+                    }
+                    if ($op1 == '+') {
+                        $result = $intermediateResult + $num1;
+                    } else {
+                        $result = $num1-$intermediateResult;
+                    }
+                } else {
+                    if ($op1 == '+') {
+                        $result = $num1 + $num2;
+                    } else {
+                        $result = $num1 - $num2;
+                    }
+                    if ($op2 == '+') {
+                        $result += $num3;
+                    } else {
+                        $result -= $num3;
+                    }
+                }
 
-    // Handle multiplication and division first (operator precedence)
-    if ($op1 == '*' || $op1 == '/') {
-        if ($op1 == '*') {
-            $result = $num1 * $num2;
-        } elseif ($op1 == '/') {
-            if ($num2 == 0) {
-                echo "ERROR: Division by zero!";
-                exit;
+                print "Result: " . $result;
+            } else {
+                print "ERROR: Valid operators are +, -, *, /.";
             }
-            $result = $num1 / $num2;
-        }
-        // Then apply the second operator
-        if ($op2 == '+') {
-            $result += $num3;
-        } elseif ($op2 == '-') {
-            $result -= $num3;
-        } elseif ($op2 == '*') {
-            $result *= $num3;
-        } elseif ($op2 == '/') {
-            if ($num3 == 0) {
-                echo "ERROR: Division by zero!";
-                exit;
-            }
-            $result /= $num3;
-        }
-    } else {
-        // Handle addition or subtraction first, then apply multiplication or division
-        if ($op1 == '+') {
-            $result = $num1 + $num2;
-        } elseif ($op1 == '-') {
-            $result = $num1 - $num2;
-        }
-
-        if ($op2 == '*') {
-            $result *= $num3;
-        } elseif ($op2 == '/') {
-            if ($num3 == 0) {
-                echo "ERROR: Division by zero!";
-                exit;
-            }
-            $result /= $num3;
-        } elseif ($op2 == '+') {
-            $result += $num3;
-        } elseif ($op2 == '-') {
-            $result -= $num3;
+        } else {
+            print "ERROR: All inputs must be numbers.";
         }
     }
-
-    // Output the result
-    echo "Result: " . $result;
-}
-?>
+    ?>
+</body>
+</html>
